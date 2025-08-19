@@ -80,6 +80,12 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# For development, you might already have:
+
+
+# Add this for collectstatic:
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 # CORS / Cookies
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")]

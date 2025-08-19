@@ -16,16 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
-from analyzer.views import EmailLoginView, ResumeUploadView, MyLastResultView
-# backend/backend/urls.py
-from analyzer.views import EmailLoginView, ResumeUploadView, MyLastResultView
-
+from .views import EmailLoginView, ResumeUploadView, MyLastResultView  # Ensure these views exist
 
 urlpatterns = [
-    path('api/login/', EmailLoginView.as_view(), name='email-login'),
-    path('api/upload/', ResumeUploadView.as_view(), name='resume-upload'),
-    path('api/last/', MyLastResultView.as_view(), name='last-result'),
+    path('admin/', admin.site.urls),
+    path('api/login/', EmailLoginView.as_view(), name='login'),
+    path('api/upload/', ResumeUploadView.as_view(), name='upload'),
+    path('api/last/', MyLastResultView.as_view(), name='last'),
 ]
 
