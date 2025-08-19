@@ -22,7 +22,6 @@ ResumeX is an intelligent web application that helps users **create, optimize, a
 1. **Upload Resume** – Users upload their current resume in PDF format.
 2. **AI Analysis** – ResumeX analyzes structure, keywords, and content.
 3. **Feedback Generation** – Get personalized suggestions to improve readability, relevance, and ATS compatibility.
-4. **Download Optimized Resume** – Export the enhanced resume in a professional format.
 
 ---
 
