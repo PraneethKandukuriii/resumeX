@@ -1,5 +1,5 @@
 // frontend/src/api.js
-const API = 'http://127.0.0.1:8000';
+const API = 'https://resumex-7f6b.onrender.com'; // <- your deployed backend
 
 // Login with email
 export async function login(email) {
