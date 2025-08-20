@@ -1,13 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import status, permissions
+from rest_framework import status, permissions, serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
 
 from .models import Resume
-from .serializers import ResumeSerializer
 from .utils import extract_text_from_upload, compute_all_scores, ai_suggestions
 
 User = get_user_model()
@@ -24,11 +23,8 @@ class EmailLoginView(APIView):
         if not email:
             return Response({"error": "Email is required"}, status=400)
 
-        # Create or get user
         user, created = User.objects.get_or_create(email=email)
 
-
-        # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         return Response({
             "refresh": str(refresh),
@@ -39,38 +35,49 @@ class EmailLoginView(APIView):
 
 
 # -------------------------------
+# Resume Serializer
+# -------------------------------
+class ResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resume
+        fields = [
+            "id", "file", "uploaded_at",
+            "manual_score", "analysis",
+            "ai_feedback", "found_keywords",
+            "missing_keywords"
+        ]
+
+
+# -------------------------------
 # Resume Upload
 # -------------------------------
 class ResumeUploadView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
         file = request.FILES.get("resume")
         if not file:
             return Response({"error": "Resume file missing"}, status=400)
 
-        # Extract text BEFORE saving
+        # Extract text from uploaded file
         text = extract_text_from_upload(file)
 
-        # Save file + create Resume row
+        # Save resume in DB
         resume = Resume.objects.create(user=request.user, file=file)
 
-        # Manual deep analysis
+        # Compute scores and AI feedback
         analysis = compute_all_scores(text)
-
-        # Optional AI suggestions
         ai_feedback = ai_suggestions(text)
 
-        # Persist analysis
+        # Save analysis in resume object
         resume.manual_score = analysis.get("ats_score")
         resume.analysis = analysis
-        resume.found_keywords = analysis.get("found_keywords")
-        resume.missing_keywords = analysis.get("missing_keywords")
         resume.ai_feedback = ai_feedback
         resume.save()
 
+        # Return full analysis
         data = ResumeSerializer(resume).data
         data.update({
             "manual_score": resume.manual_score,
@@ -79,9 +86,9 @@ class ResumeUploadView(APIView):
             "subscores": analysis.get("subscores"),
             "found_keywords": analysis.get("found_keywords"),
             "missing_keywords": analysis.get("missing_keywords"),
-            "ai_feedback": ai_feedback,
-            "full_analysis": analysis
+            "ai_feedback": ai_feedback
         })
+
         return Response(data, status=status.HTTP_201_CREATED)
 
 
@@ -98,9 +105,14 @@ class MyLastResultView(APIView):
             return Response({"message": "No analyses yet"}, status=200)
 
         data = ResumeSerializer(resume).data
-        data["manual_score"] = resume.manual_score
         if resume.analysis:
-            data["subscores"] = resume.analysis.get("subscores")
-            data["ats_score"] = resume.analysis.get("ats_score")
-            data["impact_score"] = resume.analysis.get("impact_score")
+            data.update({
+                "ats_score": resume.analysis.get("ats_score"),
+                "impact_score": resume.analysis.get("impact_score"),
+                "subscores": resume.analysis.get("subscores"),
+                "found_keywords": resume.analysis.get("found_keywords"),
+                "missing_keywords": resume.analysis.get("missing_keywords"),
+                "ai_feedback": resume.ai_feedback
+            })
+
         return Response(data)
