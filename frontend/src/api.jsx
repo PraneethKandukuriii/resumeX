@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_URL || 'https://resumex-api-kxjs.onrender.com'; // backend URL
+const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8001"; // backend URL
 
 // Login with email
 export async function login(email) {
