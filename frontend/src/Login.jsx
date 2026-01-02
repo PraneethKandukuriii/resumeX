@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom"; // Removed to fix router context error
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import { login } from "./api";
 
 export default function HeaderAndHero() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,24 +91,43 @@ export default function HeaderAndHero() {
     setError("");
 
     try {
-      await login(email);
-
-      toast.success("Success! Redirecting you to the upload page.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      const res = await fetch("http://127.0.0.1:8001/api/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
-      setTimeout(() => {
-        window.location.href = "/upload";
-        navigate("/upload", { state: { email } });
-      }, 3000);
-    } catch (err) {
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.access) {
+          localStorage.setItem("token", data.access);
+          toast.success("Success! Redirecting you to the upload page.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          setTimeout(() => {
+            window.location.href = "/upload";
+            navigate("/upload", { state: { email } });
+          }, 3000);
+        } else {
+          const errMsg = "No access token received. Try again.";
+          setError(errMsg);
+          toast.error(errMsg);
+        }
+      } else {
+        const errMsg = data.error || data.detail || JSON.stringify(data) || "Something went wrong";
+        setError(errMsg);
+        toast.error(errMsg);
+      }
+    } catch (err)      {
       console.error("Network error:", err);
-      const errMsg = err.message || "Network error. Please check your connection and try again.";
+      const errMsg = "Network error. Please check your connection and try again.";
       setError(errMsg);
       toast.error(errMsg);
     }
