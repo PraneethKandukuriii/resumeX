@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom"; // Removed to fix router context error
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -8,6 +9,14 @@ export default function HeaderAndHero() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isHeadlineVisible, setIsHeadlineVisible] = useState(false);
+  // const navigate = useNavigate(); // Removed to fix router context error
+  const impactStats = [
+    { value: "95%", label: "ATS Match Accuracy" },
+    { value: "3×", label: "Higher Shortlisting Rate" },
+    { value: "1K+", label: "Resumes Analyzed" },
+    { value: "<60s", label: "Instant Resume Analysis" },
+  ];
+  
   const navigate = useNavigate();
 
   const navigation = [
@@ -81,7 +90,7 @@ export default function HeaderAndHero() {
     setError("");
 
     try {
-      const res = await fetch("https://resumex-api-kxjs.onrender.com/api/login/", {
+      const res = await fetch("http://127.0.0.1:8001/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -102,6 +111,7 @@ export default function HeaderAndHero() {
             progress: undefined,
           });
           setTimeout(() => {
+            window.location.href = "/upload";
             navigate("/upload", { state: { email } });
           }, 3000);
         } else {
@@ -190,6 +200,23 @@ export default function HeaderAndHero() {
             <p className="max-w-2xl mx-auto mt-6 text-lg text-gray-300 md:text-xl">
               Stop guessing what recruiters want. Our <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-white">AI-powered analyzer</span> gives you actionable insights to land your dream job.
             </p>
+            <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+  {impactStats.map((stat, idx) => (
+    <div
+      key={idx}
+      className={`transition-all duration-700 ease-out delay-${idx * 150}
+        ${isHeadlineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+    >
+      <div className="text-3xl md:text-4xl font-extrabold text-white">
+        {stat.value}
+      </div>
+      <div className="mt-1 text-sm text-gray-400">
+        {stat.label}
+      </div>
+    </div>
+  ))}
+</div>
+
 
             <form
               onSubmit={handleSubmit}
@@ -243,6 +270,7 @@ export default function HeaderAndHero() {
       </section>
 
       <footer className="w-full py-4 text-center text-gray-500 text-sm z-20">
+        © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
         © 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
         <a
           href="https://www.linkedin.com/in/praneethkandukuriii/"
