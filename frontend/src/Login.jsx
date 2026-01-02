@@ -203,10 +203,12 @@ export default function HeaderAndHero() {
             <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
   {impactStats.map((stat, idx) => (
     <div
-      key={idx}
-      className={`transition-all duration-700 ease-out delay-${idx * 150}
-        ${isHeadlineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-    >
+    key={idx}
+    style={{ transitionDelay: `${idx * 150}ms` }}
+    className={`transition-all duration-700 ease-out
+      ${isHeadlineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+  >
+  
       <div className="text-3xl md:text-4xl font-extrabold text-white">
         {stat.value}
       </div>
