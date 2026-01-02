@@ -90,7 +90,7 @@ export default function HeaderAndHero() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8001/api/login/", {
+      const res = await fetch("https://resumex-api-kxjs.onrender.com/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -272,8 +272,7 @@ export default function HeaderAndHero() {
       </section>
 
       <footer className="w-full py-4 text-center text-gray-500 text-sm z-20">
-        © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
-        © 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
+        © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}© 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
         <a
           href="https://www.linkedin.com/in/praneethkandukuriii/"
           target="_blank"
