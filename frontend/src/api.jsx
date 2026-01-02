@@ -13,12 +13,13 @@ export async function login(email) {
 
     if (res.ok) {
       localStorage.setItem('token', data.access);
+      return data;
     }
 
-    return data;
+    throw new Error(data.error || data.detail || 'Login failed');
   } catch (err) {
     console.error('Login failed:', err);
-    throw new Error('Could not connect to backend');
+    throw err;
   }
 }
 
