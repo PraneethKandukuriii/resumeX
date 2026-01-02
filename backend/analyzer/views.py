@@ -28,7 +28,7 @@ class ResumeUploadView(APIView):
 
         # 2️⃣ Extract text from uploaded file
         text = extract_text_from_upload(file)
-        if not text.strip():
+        if not text or not text.strip():
             return Response({"error": "Could not extract text from resume"}, status=status.HTTP_400_BAD_REQUEST)
 
         # 3️⃣ Compute manual analysis scores
@@ -38,11 +38,12 @@ class ResumeUploadView(APIView):
         try:
             ai_feedback = ai_suggestions(text)
         except Exception as e:
-            ai_feedback = f"AI feedback failed: {e}"
+            print(f"AI Error: {e}")
+            ai_feedback = "AI feedback currently unavailable."
 
         # 5️⃣ Save resume to DB
         resume = Resume.objects.create(user=request.user, file=file)
-        resume.manual_score = analysis.get("ats_score")
+        resume.manual_score = analysis.get("ats_score", 0)
         resume.analysis = analysis
         resume.found_keywords = analysis.get("found_keywords")
         resume.missing_keywords = analysis.get("missing_keywords")

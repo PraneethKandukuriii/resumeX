@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { uploadResume, fetchLast } from "./api"; // Now this file will exist
 import { Doughnut, Pie } from "react-chartjs-2";
 import {
@@ -13,6 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Upload() {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const email = state?.email || "User";
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -28,6 +29,12 @@ export default function Upload() {
     { title: "Dev", path: "/dev" },
     { title: "Contact", path: "/contact" },
   ];
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     document.onclick = (e) => {
@@ -278,13 +285,8 @@ export default function Upload() {
             <div className={`flex-1 items-center mt-8 md:mt-0 md:flex ${menuOpen ? "block w-full" : "hidden"}`}>
               <ul className="flex-1 justify-end items-center space-y-4 md:flex md:space-x-8 md:space-y-0 w-full whitespace-nowrap">
                 {navigation.map((item, idx) => (
-                  <li key={idx}>
-                    <a
-                      href={item.path}
-                      className="block text-gray-300 hover:text-sky-400 transition duration-300 transform hover:scale-105 text-center md:text-left"
-                    >
-                      {item.title}
-                    </a>
+                  <li key={idx} className="text-gray-300 hover:text-sky-400 transition duration-300 transform hover:scale-105 text-center md:text-left">
+                    <a href={item.path}>{item.title}</a>
                   </li>
                 ))}
                 <li className="text-center md:text-left text-gray-300 px-3 py-1 bg-gray-700 rounded-full shadow-inner">
