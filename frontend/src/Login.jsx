@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom"; // Removed to fix router context error
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-import { login } from "./api";
 
 export default function HeaderAndHero() {
   const [menuOpen, setMenuOpen] = useState(false);
