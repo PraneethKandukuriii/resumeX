@@ -17,8 +17,6 @@ User = get_user_model()
 # -------------------------------
 class ResumeUploadView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
     def post(self, request):
         # 1️⃣ Check for uploaded file
@@ -42,7 +40,8 @@ class ResumeUploadView(APIView):
             ai_feedback = "AI feedback currently unavailable."
 
         # 5️⃣ Save resume to DB
-        resume = Resume.objects.create(user=request.user, file=file)
+        user = request.user if request.user.is_authenticated else None
+        resume = Resume.objects.create(user=user, file=file)
         resume.manual_score = analysis.get("ats_score", 0)
         resume.analysis = analysis
         resume.found_keywords = analysis.get("found_keywords")

@@ -25,18 +25,12 @@ export async function login(email) {
 
 // Upload resume file
 export async function uploadResume(file) {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('User is not authenticated');
-
   const fd = new FormData();
   fd.append('resume', file);
 
   try {
     const res = await fetch(`${API}/api/upload/`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: fd,
     });
 
@@ -54,15 +48,9 @@ export async function uploadResume(file) {
 
 // Fetch last uploaded resume result
 export async function fetchLast() {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('User is not authenticated');
-
   try {
     const res = await fetch(`${API}/api/last/`, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     if (!res.ok) {
