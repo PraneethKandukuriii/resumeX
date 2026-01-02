@@ -28,9 +28,14 @@ export async function uploadResume(file) {
   const fd = new FormData();
   fd.append('resume', file);
 
+  const token = localStorage.getItem('token');
+
   try {
     const res = await fetch(`${API}/api/upload/`, {
       method: 'POST',
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
       body: fd,
     });
 
@@ -48,9 +53,15 @@ export async function uploadResume(file) {
 
 // Fetch last uploaded resume result
 export async function fetchLast() {
+  const token = localStorage.getItem('token');
+
   try {
     const res = await fetch(`${API}/api/last/`, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
     });
 
     if (!res.ok) {
