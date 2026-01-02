@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
+
     "corsheaders",
     "storages",
     "rest_framework_simplejwt",
@@ -65,7 +66,7 @@ MIDDLEWARE = [
 # ==========================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://resume-x-eight.vercel.app",
+    "https://resumex-one.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

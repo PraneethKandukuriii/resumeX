@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom"; // Removed to fix router context error
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import { login } from "./api";
 
 export default function HeaderAndHero() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,43 +91,24 @@ export default function HeaderAndHero() {
     setError("");
 
     try {
-      const res = await fetch("https://resumex-api-kxjs.onrender.com/api/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      await login(email);
+
+      toast.success("Success! Redirecting you to the upload page.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        if (data.access) {
-          localStorage.setItem("token", data.access);
-          toast.success("Success! Redirecting you to the upload page.", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setTimeout(() => {
-            window.location.href = "/upload";
-            navigate("/upload", { state: { email } });
-          }, 3000);
-        } else {
-          const errMsg = "No access token received. Try again.";
-          setError(errMsg);
-          toast.error(errMsg);
-        }
-      } else {
-        const errMsg = data.error || data.detail || JSON.stringify(data) || "Something went wrong";
-        setError(errMsg);
-        toast.error(errMsg);
-      }
-    } catch (err)      {
+      setTimeout(() => {
+        window.location.href = "/upload";
+        navigate("/upload", { state: { email } });
+      }, 3000);
+    } catch (err) {
       console.error("Network error:", err);
-      const errMsg = "Network error. Please check your connection and try again.";
+      const errMsg = err.message || "Network error. Please check your connection and try again.";
       setError(errMsg);
       toast.error(errMsg);
     }
@@ -272,7 +254,8 @@ export default function HeaderAndHero() {
       </section>
 
       <footer className="w-full py-4 text-center text-gray-500 text-sm z-20">
-        © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}© 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
+        © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
+        © 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
         <a
           href="https://www.linkedin.com/in/praneethkandukuriii/"
           target="_blank"
