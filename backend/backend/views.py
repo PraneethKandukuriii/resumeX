@@ -26,21 +26,30 @@ class EmailLoginView(APIView):
 
     def post(self, request):
         email = request.data.get("email")
+
         if not email:
             return Response(
                 {"error": "Email is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Only use email, no username field
-        user, created = User.objects.get_or_create(email=email)
+        username = email.split("@")[0]
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={"username": username}
+        )
 
         refresh = RefreshToken.for_user(user)
-        return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        })
 
+        return Response(
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "email": user.email,
+            },
+            status=status.HTTP_200_OK
+        )
 
 class ResumeUploadView(APIView):
     parser_classes = [MultiPartParser, FormParser]
