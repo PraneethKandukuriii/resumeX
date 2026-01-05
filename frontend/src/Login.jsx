@@ -91,43 +91,24 @@ export default function HeaderAndHero() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8001/api/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      await login(email);
+
+      toast.success("Success! Redirecting you to the upload page.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        if (data.access) {
-          localStorage.setItem("token", data.access);
-          toast.success("Success! Redirecting you to the upload page.", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-          setTimeout(() => {
-            window.location.href = "/upload";
-            navigate("/upload", { state: { email } });
-          }, 3000);
-        } else {
-          const errMsg = "No access token received. Try again.";
-          setError(errMsg);
-          toast.error(errMsg);
-        }
-      } else {
-        const errMsg = data.error || data.detail || JSON.stringify(data) || "Something went wrong";
-        setError(errMsg);
-        toast.error(errMsg);
-      }
-    } catch (err)      {
+      setTimeout(() => {
+        window.location.href = "/upload";
+        navigate("/upload", { state: { email } });
+      }, 3000);
+    } catch (err) {
       console.error("Network error:", err);
-      const errMsg = "Network error. Please check your connection and try again.";
+      const errMsg = err.message || "Network error. Please check your connection and try again.";
       setError(errMsg);
       toast.error(errMsg);
     }

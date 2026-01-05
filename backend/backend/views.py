@@ -33,11 +33,8 @@ class EmailLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        username = email.split("@")[0]
-
         user, created = User.objects.get_or_create(
             email=email,
-            defaults={"username": username}
         )
 
         refresh = RefreshToken.for_user(user)

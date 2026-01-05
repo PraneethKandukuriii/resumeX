@@ -69,6 +69,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://resumex-one.vercel.app",
     "https://www.resumex-one.vercel.app",
+    "https://resumex-one.vercel.app/", # Sometimes trailing slash matters depending on browser/client
 ]
 
 CORS_ALLOW_CREDENTIALS = True
