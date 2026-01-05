@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -10,7 +11,8 @@ load_dotenv()
 # ==========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
+
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
@@ -38,12 +40,11 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
-
     "corsheaders",
     "storages",
     "rest_framework_simplejwt",
 
-    # Local
+    # Local apps
     "analyzer",
 ]
 
@@ -96,17 +97,14 @@ TEMPLATES = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 # ==========================
-# DATABASE (PostgreSQL on Render)
+# DATABASE (Render PostgreSQL)
 # ==========================
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-    }
+    "default": dj_database_url.parse(
+        os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True,
+    )
 }
 
 # ==========================
@@ -126,7 +124,7 @@ USE_TZ = True
 # STATIC & MEDIA
 # ==========================
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
