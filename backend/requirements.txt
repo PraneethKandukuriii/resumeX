@@ -46,3 +46,4 @@ tqdm==4.67.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==1.26.20
+dj-database-url==2.2.0
