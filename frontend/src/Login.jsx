@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom"; // Removed to fix router context error
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { login } from "./api";
@@ -10,7 +9,6 @@ export default function HeaderAndHero() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isHeadlineVisible, setIsHeadlineVisible] = useState(false);
-  // const navigate = useNavigate(); // Removed to fix router context error
   const impactStats = [
     { value: "95%", label: "ATS Match Accuracy" },
     { value: "3×", label: "Higher Shortlisting Rate" },
@@ -103,7 +101,7 @@ export default function HeaderAndHero() {
         progress: undefined,
       });
       setTimeout(() => {
-        window.location.href = "/upload";
+        // Use navigate for SPA routing to preserve state; window.location.href causes a reload
         navigate("/upload", { state: { email } });
       }, 3000);
     } catch (err) {
@@ -255,7 +253,6 @@ export default function HeaderAndHero() {
 
       <footer className="w-full py-4 text-center text-gray-500 text-sm z-20">
         © 2026 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
-        © 2025 ResumeX – Intelligent Resume Insights. All rights reserved. | Developed by{" "}
         <a
           href="https://www.linkedin.com/in/praneethkandukuriii/"
           target="_blank"
