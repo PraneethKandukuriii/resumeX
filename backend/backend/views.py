@@ -1,23 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status, permissions, parsers
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+import uuid
 
 from analyzer.models import Resume
 from analyzer.serializers import ResumeSerializer
 from analyzer.utils import extract_text_from_upload, compute_all_scores, ai_suggestions
-
-# backend/views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
-from rest_framework import status
-from rest_framework import permissions
 
 User = get_user_model()
 
@@ -33,8 +26,13 @@ class EmailLoginView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Generate a unique username from email to satisfy default User model requirements
+        # Example: john@example.com -> john_a1b2
+        username_base = email.split("@")[0]
+        
         user, created = User.objects.get_or_create(
             email=email,
+            defaults={"username": f"{username_base}_{uuid.uuid4().hex[:8]}"}
         )
 
         refresh = RefreshToken.for_user(user)

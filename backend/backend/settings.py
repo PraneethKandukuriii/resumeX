@@ -165,4 +165,5 @@ SIMPLE_JWT = {
 # ==========================
 # CUSTOM USER MODEL
 # ==========================
-AUTH_USER_MODEL = "analyzer.SimpleUser"
+# Commented out to use the default Django User model as requested
+# AUTH_USER_MODEL = "analyzer.SimpleUser"
